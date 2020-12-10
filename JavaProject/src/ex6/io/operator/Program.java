@@ -44,15 +44,17 @@ public class Program {
 		// % n$ +(right),-(left) width precision(.00..) conversion(d,f,x,..)
 		System.out.printf("%1$d %1$d %1$d\n",1);
 		
-		System.out.printf("\t±¹¾î1 : %3d\n", kor);
-		System.out.printf("\t±¹¾î2 : %3d\n", j);
-		System.out.printf("\t±¹¾î3 : %3d\n", i);
-		System.out.printf("\tÃÑÁ¡ : %3d\n", total);
-		System.out.printf("\tÆò±Õ : %.2f\n", avg);
+		System.out.printf("±¹¾î1 : %3d\n", kor);
+		System.out.printf("±¹¾î2 : %3d\n", j);
+		System.out.printf("±¹¾î3 : %3d\n", i);
+		System.out.printf("ÃÑÁ¡ : %3d\n", total);
+		System.out.printf("Æò±Õ : %.2f\n", avg);
 	
-		System.out.println(80);
+		System.out.printf("%d\n",80);
+		System.out.printf("%d\n", 20);
 		
-		System.out.printf("%d-%d-%d-%s",2013,12,22,"a");
+		System.out.printf("%d-%d-%d-%s\n",2013,12,22,"a");
+		System.out.printf("%1$5.2f",2.222);
 		//System.out.write(80);
 		//System.out.flush(); % 1$ +,- width precision conversion
 		
