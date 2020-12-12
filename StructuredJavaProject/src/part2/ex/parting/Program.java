@@ -8,6 +8,7 @@ public class Program {
 		Scanner scan = new Scanner(System.in);
 		Boolean loop = true;
 		int[] kors = new int[3];
+				
 		quit : 
 			while(loop) {
 			int menu = menu();
