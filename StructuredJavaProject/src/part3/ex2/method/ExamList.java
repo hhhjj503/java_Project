@@ -1,24 +1,35 @@
-package part3.ex1.encapsulation;
+package part3.ex2.method;
 
 import java.util.Scanner;
 
 public class ExamList {
 
-	Exam[] exams;
-	int current;
+	private Exam[] exams;
+	private int current;
+	private int menu;
 	
-	public void insertList(ExamList list,int current) {
-		// TODO Auto-generated method stub
+	
+	//객체 + ()함수
+	public ExamList() {
+		this(3);
+	}
+	
+	public ExamList(int size) {
+		this.exams = new Exam[size];
+		this.current = 0;
+	}
+	
+	public void insertList() {
+	// TODO Auto-generated method stub
 		Scanner scan = new Scanner(System.in);
 		System.out.println("-----------------------------"); // print() = wtite() + flush()
 		System.out.println("|             \\ 성적입력      |");
 		System.out.println("----------------------------");
+			int kor, eng, math;
 		
-			int kor,eng,math;
-			Exam exam = new Exam();
 			do {
 				System.out.printf("국어 성적 : ");
-				kor = scan.nextInt(); 
+				kor = scan.nextInt();
 			}while(kor < 0 || kor > 100);
 			do {
 				System.out.printf("영어 성적 : ");
@@ -29,13 +40,11 @@ public class ExamList {
 				math = scan.nextInt();
 				System.out.println("성적을 모두 입력했습니다.");
 			}while(math < 0 || math > 100);
+
+			Exam exam = new Exam(kor, eng, math);
 			
-			exam.kor = kor;
-			exam.eng = eng;
-			exam.math = math;
-			
-			int capacity = list.exams.length;
-			Exam[] origin = list.exams;
+			int capacity = exams.length;
+			Exam[] origin = exams;
 			
 			if(capacity == current) {
 				
@@ -45,47 +54,36 @@ public class ExamList {
 				for(int i = 0; i < capacity;i++) {
 					temp[i] = origin[i];
 				}
-				list.exams = temp;
+				exams = temp;
 			}
 			
-			list.exams[list.current] = exam;
-			list.current++; 
-			scan.close();
+			exams[this.current] = exam;
+			current++; 
 	}
 	
-	public void printList(ExamList list) { 
-		printList(list, list.current);
+	public void printList() { 
+		printList(this.current);
 	}
 	
-	public void printList(ExamList list, int size) { 
+	public void printList(int size) { 
 		System.out.println("-----------------------------"); // print() = wtite() + flush()
 		System.out.println("|             \\ 성적출력      |");
 		System.out.println("----------------------------");
-		Exam[] exams = list.exams;
+		Exam[] exams = this.exams;
 		for(int i = 0 ; i < size; i++) {
-			int kor = exams[i].kor;
-			int eng = exams[i].eng;
-			int math = exams[i].math;
-			int total = kor + eng + math;
-			float avg = total/3.0f;
+			int total = exams[i].getTotal();
+			float avg = exams[i].getAvg();
 			
-			System.out.printf("\t국어점수 : %d\n", kor);
-			System.out.printf("\t영어점수 : %d\n", eng);
-			System.out.printf("\t수학점수 : %d\n", math);
+			System.out.printf("\t국어점수 : %d\n", exams[i].getKorr());
+			System.out.printf("\t영어점수 : %d\n", exams[i].getEng());
+			System.out.printf("\t수학점수 : %d\n", exams[i].getMath());
 			System.out.printf("총점 : %3d\n", total);
 			System.out.printf("평균 : %5.2f\n", avg);
 			System.out.println("------------------------\n");
 	 	}
 	}
 
-	
-	public void init(ExamList list) {
-		// TODO Auto-generated method stub
-		list.exams = new Exam[3];
-		list.current = 0;
-	}
-	
-	public int menu() {
+	public int menu() { 
 		// ----------���� �Է� �κ�-----------------------------------
 					System.out.println("-----------------------------"); // print() = wtite() + flush()
 					System.out.println("|             \\메인메뉴      |");
@@ -96,8 +94,7 @@ public class ExamList {
 					System.out.println("\t3.종료");
 					System.out.println("\t메뉴선택>");
 					Scanner scan = new Scanner(System.in);
-					int menu = scan.nextInt();
-					scan.close();
-					return menu;
+					this.menu = scan.nextInt();
+					return this.menu;
 	}
 }
