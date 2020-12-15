@@ -2,9 +2,9 @@ package part3.ex3.UIcodeSeperated;
 
 public class ExamList {
 
-	private Exam[] exams;
+	private Exam[] exams; //aggregation has A
 	private int current;
-
+	
 	//객체 + ()함수
 	public ExamList() { 
 		this(3);

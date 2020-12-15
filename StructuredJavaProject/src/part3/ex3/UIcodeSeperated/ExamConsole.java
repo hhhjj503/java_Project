@@ -4,8 +4,11 @@ import java.util.Scanner;
 
 public class ExamConsole {
 	
-	private ExamList list = new ExamList();
+	private ExamList list; //composition has A
 	
+	
+	 public ExamConsole() { list = new ExamList(); }
+	 
 	public int menu() { 
 		// ----------���� �Է� �κ�-----------------------------------
 					System.out.println("-----------------------------"); // print() = wtite() + flush()

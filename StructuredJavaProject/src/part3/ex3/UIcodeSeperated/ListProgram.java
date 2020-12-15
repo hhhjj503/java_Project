@@ -9,7 +9,6 @@ public class ListProgram {
 		ExamConsole console = new ExamConsole();
 		Boolean loop = true;
 		
-		
 		quit :
 			while(loop) {
 				switch(console.menu()) {
