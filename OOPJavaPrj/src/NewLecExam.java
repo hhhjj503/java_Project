@@ -6,7 +6,7 @@ public class NewLecExam extends Exam {
 	//자식클래스 extends 부모클래스
 	
 	private int com;
-
+	
 	public NewLecExam() {
 		// TODO Auto-generated constructor stub
 		this(0,0,0,0);
