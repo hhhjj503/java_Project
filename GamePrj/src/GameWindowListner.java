@@ -1,24 +1,9 @@
-import java.awt.Frame;
-import java.awt.Graphics;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
 import javax.swing.JOptionPane;
 
-public class GameFrame extends Frame implements WindowListener {
-	
-	public GameFrame() {
-		// TODO Auto-generated constructor stub
-		addWindowListener(this);
-		setVisible(true);		
-	}
-	
-	@Override
-	public void paint(Graphics g) {
-		// TODO Auto-generated method stub
-		super.paint(g);
-		g.drawRect(100, 100, 200, 100);
-	}
+public class GameWindowListner implements WindowListener{
 
 	@Override
 	public void windowActivated(WindowEvent e) {
@@ -27,15 +12,14 @@ public class GameFrame extends Frame implements WindowListener {
 	}
 
 	@Override
-	public void windowClosed(WindowEvent e) {
+	public void windowClosed(WindowEvent e) { //닫힌 후
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void windowClosing(WindowEvent e) {
-		// TODO Auto-generated method stub
-		JOptionPane.showMessageDialog(this, "Good Bye~");
+	public void windowClosing(WindowEvent e) { //닫히기전
+		JOptionPane.showMessageDialog(null, "Good Bye~");
 		System.exit(0);
 	}
 
@@ -62,7 +46,5 @@ public class GameFrame extends Frame implements WindowListener {
 		// TODO Auto-generated method stub
 		
 	}
-	
-	
-	
+
 }
