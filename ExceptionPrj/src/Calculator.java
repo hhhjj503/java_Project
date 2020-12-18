@@ -25,11 +25,15 @@ public class Calculator {
 		if(result < 0)
 			throw new under1000(); //throw 명령어
 		
-		return x + y;
+		return result;
 	}
 
-	public static int sub(int x, int y) {
-		return x -y;
+	public static int sub(int x, int y) throws under1000 {
+		int result = x - y;
+		if(result < 0)
+			throw new under1000(); //throw 명령어
+		
+		return result;
 	}
 
 	public static int multi(int x, int y) {

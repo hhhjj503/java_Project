@@ -1,6 +1,6 @@
 import java.util.Scanner;
 
-public class over1000 extends Exception {
+public class over1000 extends RuntimeException {
 	
 	@Override
 	public String getMessage() {
