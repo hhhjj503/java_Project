@@ -18,7 +18,7 @@ public class Calculator {
 		return x + y;
 	}
 
-	public static int add(int x, int y) throws over1000, under1000 { //throws 동사
+	public static int add(int x, int y) throws under1000 { //throws 동사
 		int result = x +y;
 		if(result > 1000)
 			throw new over1000();

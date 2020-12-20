@@ -1,7 +1,7 @@
 
 public class Program {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws under1000 {
 		// TODO Auto-generated method stub
 		//Calculator calc = new Calculator(3,4);
 		//calc.add();
@@ -12,19 +12,17 @@ public class Program {
 		
 		
 		//switch case 랑 비스한 느낌?!
-		/* try { */
-		result = Calculator.add(3,10); //static 함수
+		result = Calculator.add(3,10000); // RuntimeException
 		System.out.printf("add : %d\n", result);
 		
+		try { 
 		result = Calculator.sub(3,4); //static 함수
 		System.out.printf("sub : %d\n", result);
-		/*} catch(over1000 e) {
-			System.out.println(e.getMessage());
-		} catch(Exception e) {
+		} catch(under1000 e) { //Exception
 			System.out.println("음수처리");
 		} finally {
 			System.out.println("마지막예외이며 기본실행!");
-		}*/
+		}
 		
 		result = Calculator.multi(3,4); //static 함수
 		System.out.printf("multi : %d\n", result);
@@ -32,5 +30,4 @@ public class Program {
 		result = Calculator.divide(3,0); //static 함수
 		System.out.printf("divide : %d\n", result);
 	}
-	
 }
