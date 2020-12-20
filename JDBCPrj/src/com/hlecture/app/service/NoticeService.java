@@ -19,17 +19,41 @@ public class NoticeService {
 	private String upwd = "root";
 	private String driver ="com.mysql.jdbc.Driver";
 	
-	public List<Notice> getList() throws SQLException {
+	public int getCount() throws SQLException {
+		int count = 0;
+		String sql = "select count(Id) as count from Notice";
+		
+		Connection con = DriverManager.getConnection(url, uid, upwd);
+		Statement st = con.createStatement();
+		ResultSet rs = st.executeQuery(sql);
+		
+		if(rs.next()) 
+		count = Integer.parseInt(rs.getString("count"));
+		
+		rs.close();
+		st.close();
+		con.close();
+		
+		return count;
+	}
+	
+	public List<Notice> getList(int page, String searchOption ,String searchQuery) throws SQLException {
 		
 		//jdbc:DB종류://hostName:port/DB이름
-		String sql = "select * from Notice where hit > 10";
+		String sql = "select * from Notice where '"+ searchOption+"' like '%"+ searchQuery+ "%' order by Id desc limit ?,?";
+		int start = (page -1) * 10;
+		int end = 10 * page;
+		int count = 10;
 		
 		//Class.forName("com.mysql.jdbc.Driver"); // mysql 의 jdbc driver 객체 정보를 가져옴
 		Connection con = DriverManager.getConnection(url,uid, upwd);
 		//jdbc 객체를 참조할수있는 변수가 Connection 형 변수 jdbc 드라이버를 가져오는 객체가 DriverManager
-		Statement st = con.createStatement();
-		ResultSet rs = st.executeQuery(sql);
-		
+		PreparedStatement st = con.prepareStatement(sql);
+		//st.setString(1, searchOption);
+		//st.setString(1, '%'+searchQuery+'%');
+		st.setInt(1, start);
+		st.setInt(2, count);
+		ResultSet rs = st.executeQuery();
 		List<Notice> list = new ArrayList<Notice>(); //리스트
 		//int[] inti = new int[3]; : 배열
 		
@@ -44,7 +68,6 @@ public class NoticeService {
 		
 		Notice notice = new Notice(id,title,writer_id,content,regDate,hit,files);
 		list.add(notice);
-		
 		}
 		
 		rs.close();
@@ -128,6 +151,6 @@ public class NoticeService {
 
 		return result;
 	}
-	
+
 	
 }
