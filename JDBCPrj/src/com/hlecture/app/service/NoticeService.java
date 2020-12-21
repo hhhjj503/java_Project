@@ -40,7 +40,7 @@ public class NoticeService {
 	public List<Notice> getList(int page, String searchOption ,String searchQuery) throws SQLException {
 		
 		//jdbc:DB종류://hostName:port/DB이름
-		String sql = "select * from Notice where '"+ searchOption+"' like '%"+ searchQuery+ "%' order by Id desc limit ?,?";
+		String sql = "select * from Notice where ? like ? order by Id desc limit ?,?";
 		int start = (page -1) * 10;
 		int end = 10 * page;
 		int count = 10;
@@ -49,10 +49,10 @@ public class NoticeService {
 		Connection con = DriverManager.getConnection(url,uid, upwd);
 		//jdbc 객체를 참조할수있는 변수가 Connection 형 변수 jdbc 드라이버를 가져오는 객체가 DriverManager
 		PreparedStatement st = con.prepareStatement(sql);
-		//st.setString(1, searchOption);
-		//st.setString(1, '%'+searchQuery+'%');
-		st.setInt(1, start);
-		st.setInt(2, count);
+		st.setString(1, searchOption);
+		st.setString(2, "%"+searchQuery+"%");
+		st.setInt(3, start);
+		st.setInt(4, count);
 		ResultSet rs = st.executeQuery();
 		List<Notice> list = new ArrayList<Notice>(); //리스트
 		//int[] inti = new int[3]; : 배열
