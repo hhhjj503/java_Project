@@ -3,6 +3,8 @@ public class IfProgram {
 
 	public static void main(String[] args) {
 		
+		//if -> else if -> else break;
+ 		//siwtch -> catch  -> default break;
 		//if 문은 우선순위를 통해 적용하기 떄문에 제일좁은 범위부터 점점 넓어지는 범위로 작성
 		// 제일 한정된 범위를 가장 우선적으로 비교 -> 점점 넓어지는 범위를 비교하고 가장 범용적인 범위는 else 로
 		for(int i = 0;i<5;i++) 
