@@ -1,8 +1,7 @@
 package com.newlecture.web;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-
+import java.io.*;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -25,6 +24,12 @@ public class Nana extends HttpServlet {
 		
 		if(cnt_ != null && !cnt_.equals(""))
 			cnt = Integer.parseInt(request.getParameter("cnt"));
+		
+		
+		/*
+		 * OutputStream os = response.getOutputStream(); PrintStream ps = new
+		 * PrintStream(os,true); ps.println();
+		 */
 		
 		
 		
