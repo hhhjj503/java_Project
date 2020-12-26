@@ -76,7 +76,7 @@ public class calc2 extends HttpServlet {
 			response.addCookie(vCookie);
 			response.addCookie(oCookie);
 			
-			response.sendRedirect("calc2.html");
+			response.sendRedirect("calc2.html"); //url을 사용자 대신 프로그램에서 요청하는것
 		}
 	}
 }
