@@ -25,14 +25,6 @@ public class Nana extends HttpServlet {
 		if(cnt_ != null && !cnt_.equals(""))
 			cnt = Integer.parseInt(request.getParameter("cnt"));
 		
-		
-		/*
-		 * OutputStream os = response.getOutputStream(); PrintStream ps = new
-		 * PrintStream(os,true); ps.println();
-		 */
-		
-		
-		
 		PrintWriter out = response.getWriter();
 		for(int i =0; i < cnt;i++)
 		out.println((i+1)+" : Hello 안녕 ~~~<br/>");
