@@ -7,9 +7,6 @@
 <meta charset="UTF-8">
 <title>Insert title here</title>
 </head>
-<%
-pageContext.setAttribute("result", "bb");
-%>
 <body>
 	<%= request.getAttribute("result") %>입니다.<br/>
 	${result} 입니다 <br/>

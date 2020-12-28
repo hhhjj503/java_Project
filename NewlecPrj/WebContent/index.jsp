@@ -1,3 +1,5 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -6,8 +8,5 @@
 </head>
 <body>
 
-	<a href="/hi">100번</a>
-	<a href="/hi?cnt=3">3번</a>
-	
 </body>
 </html>
