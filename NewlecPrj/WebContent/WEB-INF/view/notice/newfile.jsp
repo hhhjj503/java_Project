@@ -3,6 +3,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>    
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <!DOCTYPE html>
 <html>
@@ -180,13 +181,18 @@
 					for(Notice n : list)  {
 						pageContext.setAttribute("n", n);
 					%> --%>
-					<c:forEach items="${list}" var="n">
+					
+					<c:forEach items="${list}" var="n" varStatus="st">
 					<tr>
-						<td>${n.id}</td> 
+						<td>${n.id}</td>  <%-- ${st.index +1} --%> 
 						<td class="title indent text-align-left"><a href="/notice/detail?id=${n.id}">${n.title}</a></td>
 						<td>${n.writerId}</td>  
-						<td>${n.date}</td>
-						<td>${n.hit}</td>
+						<td>
+						<fmt:formatDate pattern="yyyy-MM-dd" value="${n.date}" />
+						</td>
+						<td>
+						<fmt:formatNumber pattern=",###" type="number"  value="${n.hit}" />
+						</td>
 					</tr>
 					</c:forEach>
 					<%-- <% } %> --%>	
@@ -208,15 +214,24 @@
 		<span class="btn btn-prev" onclick="alert('이전 페이지가 없습니다.');">이전</span>
 		
 	</div>
-	<ul class="-list- center">
-		<li><a class="-text- orange bold" href="?p=1&t=&q=" >1</a></li>
-				
+	
+	<!-- var 옵션으로 변수를 선언하면 service 의 지역변수로 선언된다! 이후의 코드에서 계속사용가능 -->
+	
+	<c:set var="page" value="${(param.p == null ? 1 : param.p)}"/>
+	<c:set var="startNum" value="${page-((page-1)%5)}" />
+	<c:set var="lastNum" value="23" />
+	<ul class="-list- center"> 
+	<c:forEach var="n" begin="0" end="4" >
+		<li><a class="-text- orange bold" href="?p=${startNum+n}&t=&q=" >${startNum+n}</a></li>
+	</c:forEach>
 	</ul>
 	<div>
-		
-		
-			<span class="btn btn-next" onclick="alert('다음 페이지가 없습니다.');">다음</span>
-		
+		<c:if test="${ lastNum > (startNum+5)}">
+		<a href="?p=${startNum+5}&t=&q=" class="btn btn-next">다음</a>
+		</c:if>
+		<c:if test="${ lastNum <= (startNum+5)}">
+		<span class="btn btn-next" onclick="alert('다음 페이지가 없습니다.');">다음</span>
+		</c:if>
 	</div>
 	
 			</div>
