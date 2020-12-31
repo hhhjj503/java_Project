@@ -17,51 +17,34 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.newlec.app.entity.Notice;
+import com.newlec.app.service.NoticeService;
 
 @WebServlet("/notice/list")
 public class NoticeListController extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-		String url = "jdbc:mysql://localhost:3306/testDB?serverTimezone=Asia/Seoul&useSSL=false";
-		String uid = "root";
-		String upwd ="root"; 
-		String sql = "select * from notice";
-		String driver = "com.mysql.jdbc.Driver";
-		List<Notice> list = new ArrayList<Notice>();
 		
-		try {
-			Class.forName(driver);
-			Connection con = DriverManager.getConnection(url, uid, upwd);
-			Statement st = con.createStatement();
-			ResultSet rs = st.executeQuery(sql);
-			
-			while(rs.next()) {
-				int id = rs.getInt("Id");
-				String title = rs.getString("Title");
-				String writer = rs.getString("Writer_ID");
-				Date date = rs.getDate("RegDate");
-				int hit = rs.getInt("Hit");
-				String files =  rs.getString("Files");
-				String content =  rs.getString("Content");	
-				
-				Notice n = new Notice(id, title, writer, date, hit, files, content);
-				list.add(n);
-			}	
-			rs.close();
-			st.close();
-			con.close();
-
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		//null 값일 경경우를 대비해 일단 임시변수에 꺼낸다
+		String field_ = request.getParameter("f");
+		String query_ = request.getParameter("q");
+		String page_ = request.getParameter("p");
+		int page = 1;
+		//꺼낸값이 null 값일 경우를 대비한 원본값
+		String field ="title";
+		String query ="";
 		
+		if(field_ != null && !field_.equals("")) field = field_;
+		if(query_ != null && !query_.equals("")) query = query_;
+		if(page_ != null && !page_.equals("")) page = Integer.parseInt(page_);
+		
+		NoticeService service = new NoticeService();
+		int count = service.getNoticeCount(field, query);
+		List<Notice> list = service.getNoticeList(field,query,page);
+		 
 		request.setAttribute("list", list);
+		request.setAttribute("count", count);
+		
 		request.getRequestDispatcher("/WEB-INF/view/notice/newfile.jsp").forward(request, response);
 		
 	}
