@@ -8098,3 +8098,12 @@ Caused by: org.eclipse.emf.ecore.xmi.FeatureNotFoundException: Feature 'dependen
 
 !ENTRY org.eclipse.wst.html.ui 1 1 2021-01-01 01:41:40.467
 !MESSAGE No line style provider for org.eclipse.wst.html.SCRIPT
+
+!ENTRY org.eclipse.wst.html.ui 1 1 2021-01-02 19:52:40.401
+!MESSAGE No line style provider for org.eclipse.wst.html.SCRIPT
+
+!ENTRY org.eclipse.wst.html.ui 1 1 2021-01-02 19:52:40.403
+!MESSAGE No line style provider for org.eclipse.wst.html.SCRIPT
+
+!ENTRY org.eclipse.wst.html.ui 1 1 2021-01-02 19:52:40.405
+!MESSAGE No line style provider for org.eclipse.wst.html.SCRIPT

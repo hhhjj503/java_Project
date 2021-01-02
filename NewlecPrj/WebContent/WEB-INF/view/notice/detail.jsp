@@ -1,52 +1,10 @@
-<%-- <%@page import="java.util.Date"%>
-<%@page import="java.sql.PreparedStatement"%>
-<%@page import="java.sql.DriverManager"%>
-<%@page import="java.sql.ResultSet"%>
-<%@page import="java.sql.Statement"%>
-<%@page import="java.sql.Connection"%>--%>
-
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-
-<!-- Controller -->
-<%-- <%
-
-	int id = Integer.parseInt(request.getParameter("id"));
-	String url = "jdbc:mysql://localhost:3306/testDB?serverTimezone=Asia/Seoul&useSSL=false";
-	String uid = "root";
-	String upwd ="root";
-	String sql = "select * from notice where id = ?";
-	String driver = "com.mysql.jdbc.Driver";
-	
-	Class.forName(driver);
-	Connection con = DriverManager.getConnection(url, uid, upwd);
-	PreparedStatement st = con.prepareStatement(sql);
-	st.setInt(1, id);
-	ResultSet rs = st.executeQuery();
-
-	rs.next();
-	
-	//models
-	String title = rs.getString("Title");
-	String writer = rs.getString("Writer_ID");
-	Date date = rs.getDate("RegDate");
-	int hit = rs.getInt("Hit");
-	String files =  rs.getString("Files");
-	String content =  rs.getString("Content");
-	
-	rs.close();
-	st.close();
-	con.close();
-	
-%> --%>
-
-<!-- View -->
 <!DOCTYPE html>
 <html>
-
 <head>
     <title>코딩 전문가를 만들기 위한 온라인 강의 시스템</title>
     <meta charset="UTF-8">
@@ -158,7 +116,6 @@
 						
 					</ul>
 				</nav>
-
 
 	<nav class="menu">
 		<h1>협력업체</h1>

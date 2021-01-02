@@ -196,7 +196,11 @@
 					<c:forEach items="${list}" var="n" varStatus="st">
 					<tr>
 						<td>${n.id}</td>  <%-- ${st.index +1} --%> 
-						<td class="title indent text-align-left"><a href="/notice/detail?id=${n.id}">${n.title}</a></td>
+						<td class="title indent text-align-left"><a href="/notice/detail?id=${n.id}">${n.title}
+						<c:if test="${n.cmtcnt != 0}">
+						<span class="-text- orange bold" >(${n.cmtcnt})</span>
+						</c:if></a></td>
+						
 						<td>${n.writerId}</td>  
 						<td>
 						<fmt:formatDate pattern="yyyy-MM-dd" value="${n.date}" />
