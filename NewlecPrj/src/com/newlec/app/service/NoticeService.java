@@ -5,22 +5,81 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import com.newlec.app.entity.Notice;
 import com.newlec.app.entity.NoticeView;
 
 public class NoticeService {
 	
-	public List<NoticeView> getNoticeList() {
-		return getNoticeList("title","", 1);
+	public int removenoticeAll(int[] ids) {
+		
+		String url = "jdbc:mysql://localhost:3306/testDB?serverTimezone=Asia/Seoul&useSSL=false";
+		String uid = "root";
+		String upwd ="root"; 
+		String driver = "com.mysql.cj.jdbc.Driver";
+		String params = "";
+		
+		for(int i = 0 ; i < ids.length; i++) {
+			if(i < ids.length-1) params += ids[i] + ",";
+			else params += ids[i];
+		}
+			
+		String sql = "delete from notice where id in("+ params +")";
+		
+		// 등차수열 : 1+(page-1)*10
+		Connection con = null;
+		Statement pst = null;
+		int result = 0;
+		
+		try {
+			Class.forName(driver);
+			con = DriverManager.getConnection(url, uid, upwd);
+			pst = con.createStatement();
+			
+			result = pst.executeUpdate(sql);
+			
+			} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return result;
 	}
 	
-	public List<NoticeView> getNoticeList(int page) {
-		return getNoticeList("title","", page);
+	public int pubNoticeAll(int[] ids) {
+		return 0;
 	}
 	
-	public List<NoticeView> getNoticeList(String field, String query, int page) {
+	public int insertNotice(Notice notice) {
+		return 0;
+	}
+	
+	public int deletenotice(int id) {
+		return 0;
+	}
+	
+	public int updateNotice(int id) {
+		return 0;
+	}
+	
+	public List<Notice> getNoticeNewestList() {
+		return null;
+	}
+	
+	public List<NoticeView> getNoticeViewList() {
+		return getNoticeViewList("title","", 1);
+	}
+	
+	public List<NoticeView> getNoticeViewList(int page) {
+		return getNoticeViewList("title","", page);
+	}
+	
+	public List<NoticeView> getNoticeViewList(String field, String query, int page) {
 		
 		String url = "jdbc:mysql://localhost:3306/testDB?serverTimezone=Asia/Seoul&useSSL=false";
 		String uid = "root";
@@ -36,24 +95,18 @@ public class NoticeService {
 		Connection con = null;
 		PreparedStatement pst = null;
 		ResultSet rs = null;
-		System.out.println(1);
+		
 		try {
 			Class.forName(driver);
 			con = DriverManager.getConnection(url, uid, upwd);
 			pst = con.prepareStatement(sql);
-			System.out.println(2);
 			
 			pst.setString(1, "%"+query+"%");
 			//pst.setInt(2, page);
-			pst.setInt(2, (page-1)*10);
-			
-			System.out.println(3);
+			pst.setInt(2, (page-1)*10);	
 			rs = pst.executeQuery();
-			System.out.println(4);
-			System.out.println(pst.toString());
 			
 			while(rs.next()) {
-				System.out.println(5);
 				int id = rs.getInt("Id");
 				String title = rs.getString("Title");
 				String writer = rs.getString("Writer_ID");
@@ -65,7 +118,6 @@ public class NoticeService {
 				
 				NoticeView n = new NoticeView(id, title, writer, date, hit, files, cmtcnt);
 				list.add(n);
-				System.out.println("넘어옴");
 			}	
 			
 		if( rs != null)	rs.close();
@@ -82,11 +134,11 @@ public class NoticeService {
 		return list;
 	}
 	
-	public int getNoticeCount() {
-		return getNoticeCount("title","");
+	public int getNoticeViewCount() {
+		return getNoticeViewCount("title","");
 	}
 	
-	public int getNoticeCount(String field, String query) {
+	public int getNoticeViewCount(String field, String query) {
 		
 		String url = "jdbc:mysql://localhost:3306/testDB?serverTimezone=Asia/Seoul&useSSL=false";
 		String uid = "root";
@@ -127,7 +179,7 @@ public class NoticeService {
 		return count;
 	}
 	
-	public NoticeView getNotice(int id) {
+	public NoticeView getNoticeView(int id) {
 		
 		NoticeView notice = null;
 		
@@ -172,7 +224,7 @@ public class NoticeService {
 		return notice;
 	}
 	
-	public NoticeView getNextNotice(int id) {
+	public NoticeView getNextNoticeView(int id) {
 		
 		String sql = "select * from (select (@rownum2:=@rownum2+1) as rownum2 , notice.* from notice where (@rownum2:=0)=0 ) NN where rownum2 > "
 				+ " (select N.rownum from (select (@rownum:=@rownum+1) as rownum, notice.id from notice where (@rownum:=0)=0 ) N"
@@ -218,7 +270,7 @@ public class NoticeService {
 		return notice;
 	}
 	
-	public NoticeView getPrevNotice(int id) {
+	public NoticeView getPrevNoticeView(int id) {
 		
 		String sql = "select * from (select (@rownum2:=@rownum2+1) as rownum2 , notice.*"
 				+ " from notice where (@rownum2:=0)=0 ) NN where rownum2 < "
