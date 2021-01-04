@@ -183,7 +183,7 @@
 						<c:forEach items="${list}" var="n" varStatus="st">
 							<tr>
 								<td>${n.id}</td>  <%-- ${st.index +1} --%> 
-								<td class="title indent text-align-left"><a href="/notice/detail?id=${n.id}">${n.title}
+								<td class="title indent text-align-left"><a href="detail?id=${n.id}">${n.title}
 								<c:if test="${n.cmtcnt != 0}">
 								<span class="-text- orange bold" >(${n.cmtcnt})</span>
 								</c:if></a></td>
@@ -218,7 +218,7 @@
 				<div class="text-align-right margin-top">
 					<input type="submit" class="btn-text btn-default" name="cmd" value="일괄공개">
 					<input type="submit" class="btn-text btn-default" name="cmd" value="일괄삭제">
-					<a class="btn-text btn-default" href="reg.html">글쓰기</a>				
+					<a class="btn-text btn-default" href="reg">글쓰기</a>				
 				</div>
 			
 			</form>			

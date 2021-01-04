@@ -15,7 +15,7 @@ import com.newlec.app.entity.NoticeView;
 
 public class NoticeService {
 	
-	public int removenoticeAll(int[] ids) {
+	public int removeNoticeAll(int[] ids) {
 		
 		String url = "jdbc:mysql://localhost:3306/testDB?serverTimezone=Asia/Seoul&useSSL=false";
 		String uid = "root";
@@ -56,7 +56,38 @@ public class NoticeService {
 	}
 	
 	public int insertNotice(Notice notice) {
-		return 0;
+		
+		String url = "jdbc:mysql://localhost:3306/testDB?serverTimezone=Asia/Seoul&useSSL=false";
+		String uid = "root";
+		String upwd ="root"; 
+		String driver = "com.mysql.cj.jdbc.Driver";
+		String params = "";
+		String sql = "insert into notice(title, Writer_ID, content, files, pub) values(?,?,?,?,?)";
+		
+		// 등차수열 : 1+(page-1)*10
+		Connection con = null;
+		PreparedStatement pst = null;
+		int result = 0;
+		
+		try {
+			Class.forName(driver);
+			con = DriverManager.getConnection(url, uid, upwd);
+			pst = con.prepareStatement(sql);
+			pst.setString(1, notice.getTitle());
+			pst.setString(2, notice.getWriterId());
+			pst.setString(3, notice.getContent());
+			pst.setString(4, notice.getFiles());
+			pst.setBoolean(5, notice.getPub());
+			result = pst.executeUpdate();
+			System.out.println(result);
+			
+			} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return result;
 	}
 	
 	public int deletenotice(int id) {
@@ -115,8 +146,9 @@ public class NoticeService {
 				String files =  rs.getString("Files");
 				//String content =  rs.getString("Content");
 				int cmtcnt = rs.getInt("cmtcnt");
+				boolean pub = rs.getBoolean("pub");
 				
-				NoticeView n = new NoticeView(id, title, writer, date, hit, files, cmtcnt);
+				NoticeView n = new NoticeView(id, title, writer, date, hit, files, cmtcnt, pub);
 				list.add(n);
 			}	
 			
@@ -179,24 +211,21 @@ public class NoticeService {
 		return count;
 	}
 	
-	public NoticeView getNoticeView(int id) {
+	public Notice getNotice(int id) {
 		
-		NoticeView notice = null;
-		
-		String sql = "select * from notice where id = ?";
 		String url = "jdbc:mysql://localhost:3306/testDB?serverTimezone=Asia/Seoul&useSSL=false";
 		String uid = "root";
 		String upwd ="root"; 
 		String driver = "com.mysql.cj.jdbc.Driver";
-		
+		String sql = "select * from notice where id = ? ";
+		Notice n = null;
+
 		try {
 			Class.forName(driver);
 			Connection con = DriverManager.getConnection(url, uid, upwd);
-			PreparedStatement st = con.prepareStatement(sql);
-			
-			st.setInt(1, id);
-			
-			ResultSet rs = st.executeQuery();
+			PreparedStatement pst = con.prepareStatement(sql);
+			pst.setInt(1, id);
+			ResultSet rs = pst.executeQuery();
 			
 			if(rs.next()) {
 				int nid = rs.getInt("Id");
@@ -205,14 +234,14 @@ public class NoticeService {
 				Date date = rs.getDate("RegDate");
 				int hit = rs.getInt("Hit");
 				String files =  rs.getString("Files");
-				int cmtcnt =  rs.getInt("cmtcnt");	
+				String content = rs.getString("content");
+				boolean pub = rs.getBoolean("pub");
 				
-				notice = new NoticeView(nid, title, writer, date, hit, files, cmtcnt);
+				n = new Notice(nid,title,writer,date,hit,files,content,pub);
 			}	
 			rs.close();
-			st.close();
+			pst.close();
 			con.close();
-
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -221,7 +250,7 @@ public class NoticeService {
 			e.printStackTrace();
 		}
 		
-		return notice;
+		return n;
 	}
 	
 	public NoticeView getNextNoticeView(int id) {
@@ -252,9 +281,10 @@ public class NoticeService {
 				String files =  rs.getString("Files");
 				//String content =  rs.getString("Content");	
 				int cmtcnt = rs.getInt("cmtcnt");
+				boolean pub = rs.getBoolean("pub");
 				
-				notice = new NoticeView(nid, title, writer, date, hit, files, cmtcnt);
-			
+				NoticeView n = new NoticeView(id, title, writer, date, hit, files, cmtcnt, pub);
+				
 				rs.close();
 				st.close();
 				con.close();
@@ -303,9 +333,10 @@ public class NoticeService {
 				int hit = rs.getInt("Hit");
 				String files =  rs.getString("Files");
 				int cmtcnt =  rs.getInt("cmtcnt");	
+				boolean pub = rs.getBoolean("pub");
 				
-				notice = new NoticeView(nid, title, writer, date, hit, files, cmtcnt);
-			}
+				NoticeView n = new NoticeView(id, title, writer, date, hit, files, cmtcnt, pub);
+				}
 		
 			if(rs != null) rs.close();
 			if(st != null) st.close();
@@ -321,4 +352,6 @@ public class NoticeService {
 		return notice;
 
 	}
+
 }
+

@@ -71,7 +71,7 @@ public class ListController extends HttpServlet {
 			for(int i = 0; i < delIds.length;i++) {
 				ids[i] = Integer.parseInt(delIds[i]);
 			}
-			int result = service.removenoticeAll(ids);
+			int result = service.removeNoticeAll(ids);
 			System.out.println(result);
 		}
 		

@@ -1,12 +1,6 @@
-package com.newlec.app.controller.notice;
+package com.newlec.app.controller.admin.notice;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Date;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -17,18 +11,17 @@ import javax.servlet.http.HttpServletResponse;
 import com.newlec.app.entity.Notice;
 import com.newlec.app.service.NoticeService;
 
-@WebServlet("/notice/detail")
+@WebServlet("/admin/board/notice/detail")
 public class DetailController extends HttpServlet{
  
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
 		NoticeService service = new NoticeService();
-		int id = request.getParameter("id");
-		service.getNotice(id);
-		
-		
-		request.getRequestDispatcher("/WEB-INF/view/notice/detail.jsp").forward(request, response);
+		int id = Integer.parseInt(request.getParameter("id"));
+		Notice notice = service.getNotice(id);
+		request.setAttribute("n", notice);
+		request.getRequestDispatcher("/WEB-INF/view/admin/board/notice/detail.jsp").forward(request, response);
 
 		 
 	}
