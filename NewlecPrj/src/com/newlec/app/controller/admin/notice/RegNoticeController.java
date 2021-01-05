@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collection;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -15,7 +16,6 @@ import javax.servlet.http.Part;
 
 import com.newlec.app.entity.Notice;
 import com.newlec.app.service.NoticeService;
-import com.sun.corba.se.spi.orbutil.fsm.Input;
 
 @MultipartConfig(
 	//location = "/tmp",
@@ -30,7 +30,6 @@ public class RegNoticeController extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
 		request.getRequestDispatcher("/WEB-INF/view/admin/board/notice/reg.jsp").forward(request, response);
-		
 	}
 	
 	@Override
@@ -38,12 +37,34 @@ public class RegNoticeController extends HttpServlet {
 		String title = request.getParameter("title");
 		String content = request.getParameter("content");
 		String open = request.getParameter("open");
-		Part files = request.getPart("file");
-		
+		Collection<Part> files = request.getParts();
+		StringBuilder builder = new StringBuilder();
+		for(Part p : files) {
+			if(!p.getName().equals("file")) continue;
+			if(p.getSize() == 0 ) continue;
+		Part file = p;
 		String realPath = request.getServletContext().getRealPath("/upload"); //root/upload
-		String filaPath = realPath + File.separator +files.getSubmittedFileName(); //realPath + 파일명
-		InputStream fls = files.getInputStream();
-		FileOutputStream fos = new FileOutputStream(filaPath);
+		File path = new File(realPath);
+		if(!path.exists()) path.mkdirs();
+		
+		String fileName = file.getSubmittedFileName();
+		String filePath = realPath + File.separator +fileName; //realPath + 파일명
+		File name = new File(filePath);
+		
+		while(name.exists()) {
+			int n = 1;
+			String extension = fileName.substring(fileName.lastIndexOf(".")+1);
+			String fileOrigin = fileName.substring(0, fileName.lastIndexOf("."));
+			fileName = fileOrigin + "(" + n + ")" + extension;
+			filePath = realPath + File.separator +fileName;
+			n ++;
+			name = new File(filePath);
+		}
+		
+		builder.append(fileName);
+		builder.append(",");
+		InputStream fls = file.getInputStream();
+		FileOutputStream fos = new FileOutputStream(filePath);
 		
 		byte[] buffer = new byte[1024]; 
 		int size = 0;
@@ -53,14 +74,15 @@ public class RegNoticeController extends HttpServlet {
 		}
 		fos.close();
 		fls.close();
-		
+		}
+		if(!builder.toString().equals("")) builder.delete(builder.length()-1, builder.length());
 		boolean pub = false;
 		if(open != null) pub = true;
 		
 		Notice notice = new Notice();
 		notice.setTitle(title);
 		notice.setWriterId("newlec");
-		//notice.setFiles(files);
+		notice.setFiles(builder.toString());
 		notice.setContent(content);
 		notice.setPub(pub);
 		

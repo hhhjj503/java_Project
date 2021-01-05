@@ -175,8 +175,8 @@
                                 <c:forTokens var="fileName" items="${n.files}" delims="," varStatus="st">
 									
 									<c:set var="style" value="font-weight: bold; color: red;" />
-									<c:if test="${fn:endsWith(fileName, '.zip') }" >
-									<a href="${fileName}" style="${style}">${fn:toUpperCase(fileName)}</a>
+									<c:if test="${fn:endsWith(fileName, '.PNG') || fn:endsWith(fileName, '.png') }" >
+									<a download href="/upload/${fileName}" style="${style}">${fn:toUpperCase(fileName)}</a>
 									</c:if>
 									<c:if test="${not st.last}"> / </c:if>
 									</c:forTokens>
