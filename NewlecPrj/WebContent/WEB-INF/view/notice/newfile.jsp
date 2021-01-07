@@ -200,7 +200,6 @@
 						<c:if test="${n.cmtcnt != 0}">
 						<span class="-text- orange bold" >(${n.cmtcnt})</span>
 						</c:if></a></td>
-						
 						<td>${n.writerId}</td>  
 						<td>
 						<fmt:formatDate pattern="yyyy-MM-dd" value="${n.date}" />

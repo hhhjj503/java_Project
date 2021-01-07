@@ -1,6 +1,8 @@
 package com.newlec.app.controller.admin.notice;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -48,33 +50,39 @@ public class ListController extends HttpServlet {
 		
 	}
 	
-	
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
 		//request.setCharacterEncoding("UTF-8");
-		String[] openIds = request.getParameterValues("open-Id");
+		String[] openIds = request.getParameterValues("open-Id"); //3,4,5
 		String[] delIds = request.getParameterValues("del-Id");
 		String cmd = request.getParameter("cmd");
+		String ids__ = request.getParameter("ids");
+		String[] ids_ = ids__.trim().split(" "); //1,2,3,4,5,6,7,8,9,10
+		NoticeService service = new NoticeService();
 		
-		if(cmd.equals("일괄공개")) {
-			NoticeService service = new NoticeService();
-			int[] ids = new int[openIds.length];
-			for(int i = 0; i < openIds.length;i++) {
-				ids[i] = Integer.parseInt(openIds[i]);
-			}
-			int result = service.pubNoticeAll(ids);
-			System.out.println(result);
-		} else {
-			NoticeService service = new NoticeService();
-			int[] ids = new int[delIds.length];
-			for(int i = 0; i < delIds.length;i++) {
-				ids[i] = Integer.parseInt(delIds[i]);
-			}
-			int result = service.removeNoticeAll(ids);
-			System.out.println(result);
+		switch(cmd) {
+		case "일괄공개" :
+			List<String> oids = Arrays.asList(openIds);
+			List<String> cids = new ArrayList(Arrays.asList(ids_));
+			cids.removeAll(oids);
+			
+			System.out.println(Arrays.asList(ids_));
+			System.out.println(oids);
+			System.out.println(cids);
+			
+			// transaction
+			service.pubNoticeAll(oids, cids);
+			//service.closeNoticeAll(closeids);
+			break;
+		case "일괄삭제" :
+			int[] idsD = new int[delIds.length];
+			for(int i = 0; i < delIds.length;i++) 
+				idsD[i] = Integer.parseInt(delIds[i]);
+			int resultD = service.removeNoticeAll(idsD);
+			System.out.println(resultD);
+			break;
 		}
-		
 		response.sendRedirect("list");
 	}
 }

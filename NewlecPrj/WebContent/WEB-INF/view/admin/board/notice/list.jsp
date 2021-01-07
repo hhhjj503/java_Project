@@ -181,6 +181,12 @@
 						<tbody>
 
 						<c:forEach items="${list}" var="n" varStatus="st">
+								
+								<c:set var="open" value=""/>
+								<c:if test="${n.pub}">
+									<c:set var="open" value="checked"/>
+								</c:if>
+								
 							<tr>
 								<td>${n.id}</td>  <%-- ${st.index +1} --%> 
 								<td class="title indent text-align-left"><a href="detail?id=${n.id}">${n.title}
@@ -195,7 +201,7 @@
 								<td>
 								<fmt:formatNumber pattern=",###" type="number"  value="${n.hit}" />
 								</td>
-								<td><input type="checkbox" name="open-Id" value="${n.id}"></td>
+								<td><input type="checkbox" name="open-Id" ${open} value="${n.id}"></td>
 								<td><input type="checkbox" name="del-Id" value="${n.id}"></td>
 							</tr>
 						</c:forEach>
@@ -214,15 +220,21 @@
 					<div><span class="text-orange text-strong">${(empty param.p) ? 1 : param.p }</span> / ${lastNum} pages</div>
 				</div>
 
+				
 
 				<div class="text-align-right margin-top">
+					<c:set var="ids" value=""/>
+					<c:forEach items="${list}" var="n">
+						<c:set var="ids" value="${ids} ${n.id}"/>
+					</c:forEach> 
+					<input type="hidden" name="ids" value="${ids}">
 					<input type="submit" class="btn-text btn-default" name="cmd" value="일괄공개">
 					<input type="submit" class="btn-text btn-default" name="cmd" value="일괄삭제">
 					<a class="btn-text btn-default" href="reg">글쓰기</a>				
 				</div>
 			
 			</form>			
-		
+			
 			<div class="margin-top align-center pager">	
 		
 	<div>

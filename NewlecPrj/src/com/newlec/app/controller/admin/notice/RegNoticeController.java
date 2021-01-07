@@ -52,12 +52,22 @@ public class RegNoticeController extends HttpServlet {
 		File name = new File(filePath);
 		
 		while(name.exists()) {
-			int n = 1;
-			String extension = fileName.substring(fileName.lastIndexOf(".")+1);
 			String fileOrigin = fileName.substring(0, fileName.lastIndexOf("."));
-			fileName = fileOrigin + "(" + n + ")" + extension;
-			filePath = realPath + File.separator +fileName;
-			n ++;
+			String extension = fileName.substring(fileName.lastIndexOf(".")+1);
+			int f = fileOrigin.lastIndexOf("(");
+			int b = fileOrigin.lastIndexOf(")");
+			int n = 1;
+			if(f > -1 && b > -1) {
+				String front = fileName.substring(0, (fileName.lastIndexOf("(")+1));
+				String middle = fileName.substring((fileName.lastIndexOf("(")+1), fileName.lastIndexOf(")"));
+				int mid = Integer.parseInt(middle);
+				fileOrigin = front + (mid + n) + ")";
+				fileName = fileOrigin + "." + extension;
+				filePath = realPath + File.separator +fileName;
+			} else {
+				fileName = fileOrigin + "(" + n + ")." + extension;
+				filePath = realPath + File.separator +fileName;
+			}
 			name = new File(filePath);
 		}
 		

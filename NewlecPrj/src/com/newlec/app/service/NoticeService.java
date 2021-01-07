@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -51,10 +52,72 @@ public class NoticeService {
 		return result;
 	}
 	
-	public int pubNoticeAll(int[] ids) {
+	public int pubNoticeAll(int[] oids, int[] cids) {
+		
+		List<String> oidsList = new ArrayList<>();
+		for(int i = 0; i < oids.length ; i++)
+			oidsList.add(String.valueOf(oids[i]));
+		
+		List<String> cidsList = new ArrayList<>();
+		for(int i = 0; i < cids.length ; i++)
+			cidsList.add(String.valueOf(oids[i]));
+		
+		
+		return pubNoticeAll(oidsList, cidsList);
+	}
+	
+	public int pubNoticeAll(List<String> oids, List<String> cids) {
+		
+		String oidsCSV = String.join(",", oids);
+		String cidsCSV = String.join(",", cids);
+		
+		return pubNoticeAll(oidsCSV, cidsCSV);
+	}
+	
+	public int pubNoticeAll(String oidsCSV, String cidsCSV) {
+				
+		String url = "jdbc:mysql://localhost:3306/testDB?serverTimezone=Asia/Seoul&useSSL=false";
+		String uid = "root";
+		String upwd ="root"; 
+		String driver = "com.mysql.cj.jdbc.Driver";
+		String params = "";
+		String pubSql = String.format("update notice set pub = true where id in(%s)", oidsCSV);
+		String closeSql = String.format("update notice set pub = false where id in(%s)", cidsCSV);
+		
+		// 등차수열 : 1+(page-1)*10
+		Connection con = null;
+		Statement openQ = null;
+		Statement closeQ = null;
+		int open = 0;
+		int close = 0;
+		
+		try {
+			Class.forName(driver);
+			con = DriverManager.getConnection(url, uid, upwd);
+			openQ = con.createStatement();
+			open = openQ.executeUpdate(pubSql);
+			
+			closeQ = con.createStatement();
+			close = closeQ.executeUpdate(closeSql);
+			
+			closeQ.close();
+			openQ.close();
+			con.close();
+			
+			} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		System.out.printf(" 공개글 갯수 :  %d\n", open);
+		System.out.printf(" 비공개글 갯수 :  %d\n", close);
 		return 0;
 	}
 	
+	public int closeNoticeAll(String ids) {
+		return 0;
+	}
+
 	public int insertNotice(Notice notice) {
 		
 		String url = "jdbc:mysql://localhost:3306/testDB?serverTimezone=Asia/Seoul&useSSL=false";
@@ -108,6 +171,64 @@ public class NoticeService {
 	
 	public List<NoticeView> getNoticeViewList(int page) {
 		return getNoticeViewList("title","", page);
+	}
+	
+	public List<NoticeView> getPubNoticeViewList(String field, String query, int page) {
+	
+	String url = "jdbc:mysql://localhost:3306/testDB?serverTimezone=Asia/Seoul&useSSL=false";
+	String uid = "root";
+	String upwd ="root"; 
+	String driver = "com.mysql.cj.jdbc.Driver";
+	String sql = "select * from (select (@rownum:=@rownum+1) as num, N.* from "
+			+ "(select * from Notice_view order by RegDate desc ) N where (@rownum:=0)=0 ) NN "
+			+ "where "+ field +" LIKE ? and pub = 1 limit ? , 10 ";
+	
+	// 등차수열 : 1+(page-1)*10
+	
+	List<NoticeView> list = new ArrayList<NoticeView>();
+	Connection con = null;
+	PreparedStatement pst = null;
+	ResultSet rs = null;
+	
+	try {
+		Class.forName(driver);
+		con = DriverManager.getConnection(url, uid, upwd);
+		pst = con.prepareStatement(sql);
+		
+		pst.setString(1, "%"+query+"%");
+		//pst.setInt(2, page);
+		pst.setInt(2, (page-1)*10);	
+		rs = pst.executeQuery();
+		
+		while(rs.next()) {
+			int id = rs.getInt("Id");
+			String title = rs.getString("Title");
+			String writer = rs.getString("Writer_ID");
+			Date date = rs.getDate("RegDate");
+			int hit = rs.getInt("Hit");
+			String files =  rs.getString("Files");
+			//String content =  rs.getString("Content");
+			int cmtcnt = rs.getInt("cmtcnt");
+			boolean pub = rs.getBoolean("pub");
+			
+			NoticeView n = new NoticeView(id, title, writer, date, hit, files, cmtcnt, pub);
+			list.add(n);
+		}	
+		
+	if( rs != null)	rs.close();
+	if( pst != null) pst.close();
+	if( con != null) con.close();
+
+	} catch (ClassNotFoundException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	} catch (SQLException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	return list;
+
+	
 	}
 	
 	public List<NoticeView> getNoticeViewList(String field, String query, int page) {
@@ -300,6 +421,8 @@ public class NoticeService {
 		return notice;
 	}
 	
+	
+	
 	public NoticeView getPrevNoticeView(int id) {
 		
 		String sql = "select * from (select (@rownum2:=@rownum2+1) as rownum2 , notice.*"
@@ -352,6 +475,8 @@ public class NoticeService {
 		return notice;
 
 	}
+
+	
 
 }
 
