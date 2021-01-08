@@ -170,10 +170,9 @@
 									<c:forTokens var="fileName" items="${n.files}" delims="," varStatus="st">
 									
 									<c:set var="style" value="font-weight: bold; color: red;" />
-									<c:if test="${fn:endsWith(fileName, '.zip') }" >
-									<a href="${fileName}" style="${style}">${fn:toUpperCase(fileName)}</a>
-									</c:if>
-									
+									<c:if test="${fn:endsWith(fileName, '.PNG') || fn:endsWith(fileName, '.zip') || fn:endsWith(fileName, '.png') }" >
+									<a download href="/upload/${fileName}" style="${style}">${fn:toUpperCase(fileName)}</a>
+									</c:if>									
 									<c:if test="${not st.last}"> / </c:if>
 									</c:forTokens>
 									
@@ -196,15 +195,22 @@
 								
 								<tr>
 									<th>다음글</th>
-									<td colspan="3"  class="text-align-left text-indent">다음글이 없습니다.</td>
+									<td colspan="3"  class="text-align-left text-indent">
+									<a class="text-blue text-strong" href="detail?id=${nextV.id}">${nextV.title}
+									<c:if test="${nextV.cmtcnt != 0}">
+									<span class="-text- orange bold" >(${nextV.cmtcnt})</span>
+									</c:if>
+									</a></td>
 								</tr>
-								
-									
-								
 								
 								<tr>
 									<th>이전글</th>
-									<td colspan="3"  class="text-align-left text-indent"><a class="text-blue text-strong" href="">스프링 DI 예제 코드</a></td>
+									<td colspan="3"  class="text-align-left text-indent">
+									<a class="text-blue text-strong" href="detail?id=${preV.id}">${preV.title}
+									<c:if test="${preV.cmtcnt != 0}">
+									<span class="-text- orange bold" >(${preV.cmtcnt})</span>
+									</c:if>
+									</a></td>
 								</tr>
 								
 								

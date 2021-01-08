@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.newlec.app.entity.Notice;
+import com.newlec.app.entity.NoticeView;
 import com.newlec.app.service.NoticeService;
 
 @WebServlet("/notice/detail")
@@ -24,10 +25,16 @@ public class DetailController extends HttpServlet{
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
 		NoticeService service = new NoticeService();
-		int id = request.getParameter("id");
-		service.getNotice(id);
+		String id = request.getParameter("id");
+		Notice notice = service.getNotice(id);
+		NoticeView pNotice = service.getPrevNoticeView(id);
+		System.out.println(pNotice);
+		NoticeView nNotice = service.getNextNoticeView(id);
+		System.out.println(nNotice);
 		
-		
+		request.setAttribute("n", notice);
+		request.setAttribute("nextV", nNotice);
+		request.setAttribute("preV", pNotice);
 		request.getRequestDispatcher("/WEB-INF/view/notice/detail.jsp").forward(request, response);
 
 		 

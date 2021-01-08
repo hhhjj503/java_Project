@@ -54,20 +54,20 @@ public class ListController extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
 		//request.setCharacterEncoding("UTF-8");
-		String[] openIds = request.getParameterValues("open-Id"); //3,4,5
-		String[] delIds = request.getParameterValues("del-Id");
-		String cmd = request.getParameter("cmd");
-		String ids__ = request.getParameter("ids");
-		String[] ids_ = ids__.trim().split(" "); //1,2,3,4,5,6,7,8,9,10
+		String[] openIds = request.getParameterValues("open-Id"); //3,4,5 request 한 pub 아이디
+		String[] delIds = request.getParameterValues("del-Id"); // request 한 delete 아이디
+		String cmd = request.getParameter("cmd"); //request 한 submit 값
+		String ids__ = request.getParameter("ids"); // request 한 모든 id 값
+		String[] ids_ = ids__.trim().split(" "); //1,2,3,4,5,6,7,8,9,10 trim() 으로 양쪽공백제거 (공백도 하나의 값으로 배열에 추가됨(null))
 		NoticeService service = new NoticeService();
 		
 		switch(cmd) {
 		case "일괄공개" :
-			List<String> oids = Arrays.asList(openIds);
-			List<String> cids = new ArrayList(Arrays.asList(ids_));
-			cids.removeAll(oids);
+			List<String> oids = Arrays.asList(openIds); //pub 할 id
+			List<String> cids = new ArrayList(Arrays.asList(ids_)); //close할 id
+			cids.removeAll(oids); //전체 id - pub 할 id = close 할 id
 			
-			System.out.println(Arrays.asList(ids_));
+			System.out.println(Arrays.asList(ids_)); //배열은 출력하면 변수주소값만 나오므로 List 로 바꾸어서 출력
 			System.out.println(oids);
 			System.out.println(cids);
 			

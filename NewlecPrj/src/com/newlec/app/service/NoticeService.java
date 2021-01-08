@@ -95,20 +95,31 @@ public class NoticeService {
 			Class.forName(driver);
 			con = DriverManager.getConnection(url, uid, upwd);
 			openQ = con.createStatement();
-			open = openQ.executeUpdate(pubSql);
-			
 			closeQ = con.createStatement();
-			close = closeQ.executeUpdate(closeSql);
 			
-			closeQ.close();
-			openQ.close();
-			con.close();
+			con.setAutoCommit(false); //트랜잭션 시작
+			open = openQ.executeUpdate(pubSql);
+			close = closeQ.executeUpdate(closeSql);
+			con.commit();
 			
 			} catch (ClassNotFoundException e) {
 			e.printStackTrace();
-		} catch (SQLException e) {
-			e.printStackTrace();
+		} catch(Exception e) {
+			if(con != null)
+				try {
+					con.rollback();
+				} catch (SQLException e1) { e1.printStackTrace(); }
+		} finally {
+			try {
+				con.setAutoCommit(true);
+				if(closeQ != null) closeQ.close();
+				if(openQ != null) openQ.close();
+				if(con != null) con.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
+		
 		System.out.printf(" 공개글 갯수 :  %d\n", open);
 		System.out.printf(" 비공개글 갯수 :  %d\n", close);
 		return 0;
@@ -299,7 +310,7 @@ public class NoticeService {
 		String driver = "com.mysql.cj.jdbc.Driver";
 		String sql = "select count(*) as count from ( select (@rownum:=@rownum+1) as num, N.* from "
 				+ " (select * from notice order by RegDate desc ) N where (@rownum:=0)=0 ) NN "
-				+ "where "+field+" LIKE ? ";
+				+ "where "+field+" LIKE ? and pub = 1";
 		int count = 0;
 		
 		// 등차수열 : 1+(page-1)*10
@@ -330,6 +341,11 @@ public class NoticeService {
 		
 		
 		return count;
+	}
+	
+	public Notice getNotice(String id) {
+		int idInt = Integer.valueOf(id);
+		return getNotice(idInt);
 	}
 	
 	public Notice getNotice(int id) {
@@ -376,9 +392,11 @@ public class NoticeService {
 	
 	public NoticeView getNextNoticeView(int id) {
 		
-		String sql = "select * from (select (@rownum2:=@rownum2+1) as rownum2 , notice.* from notice where (@rownum2:=0)=0 ) NN where rownum2 > "
-				+ " (select N.rownum from (select (@rownum:=@rownum+1) as rownum, notice.id from notice where (@rownum:=0)=0 ) N"
-				+ " where id = ? ) order by rownum2 limit 1";
+		String sql = "select * from (select (@rownum2:=@rownum2+1) as rownum2 , notice_view.* "
+				+ "from notice_view where (@rownum2:=0)=0) NN where NN.pub = true and rownum2 < (select N.rownum "
+				+ "from (select (@rownum:=@rownum+1) as rownum, notice_view.id from notice_view "
+				+ "where (@rownum:=0)=0 ) N where id = ?) order by rownum2 limit 1";
+		
 		String url = "jdbc:mysql://localhost:3306/testDB?serverTimezone=Asia/Seoul&useSSL=false";
 		String uid = "root";
 		String upwd ="root"; 
@@ -404,7 +422,7 @@ public class NoticeService {
 				int cmtcnt = rs.getInt("cmtcnt");
 				boolean pub = rs.getBoolean("pub");
 				
-				NoticeView n = new NoticeView(id, title, writer, date, hit, files, cmtcnt, pub);
+				Notice n = new NoticeView(id, title, writer, date, hit, files, cmtcnt, pub);
 				
 				rs.close();
 				st.close();
@@ -421,22 +439,28 @@ public class NoticeService {
 		return notice;
 	}
 	
+	public NoticeView getNextNoticeView(String id) {
+		int idInt = Integer.valueOf(id);
+		return getNextNoticeView(idInt);
+	}
 	
+	public NoticeView getPrevNoticeView(String id) {
+		int idInt = Integer.valueOf(id);
+		return getPrevNoticeView(idInt);
+	}
 	
 	public NoticeView getPrevNoticeView(int id) {
 		
-		String sql = "select * from (select (@rownum2:=@rownum2+1) as rownum2 , notice.*"
-				+ " from notice where (@rownum2:=0)=0 ) NN where rownum2 < "
-				+ "(select N.rownum from (select (@rownum:=@rownum+1) as rownum, notice.id"
-				+ " from notice where (@rownum:=0)=0 ) N where id = ? ) order by rownum2 desc limit 1";
+		String sql = "select * from (select (@rownum2:=@rownum2+1) as rownum2 , notice_view.* "
+				+ "from notice_view where (@rownum2:=0)=0) NN "
+				+ "where NN.pub = true and rownum2 > (select N.rownum from (select (@rownum:=@rownum+1) as rownum, notice_view.id "
+				+ "from notice_view where (@rownum:=0)=0 ) N where id = ? ) order by rownum2 limit 0 , 1";
 		
 		String url = "jdbc:mysql://localhost:3306/testDB?serverTimezone=Asia/Seoul&useSSL=false";
 		String uid = "root";
 		String upwd ="root"; 
 		String driver = "com.mysql.cj.jdbc.Driver";
-		NoticeView notice = null;
-		
-		// 등차수열 : 1+(page-1)*10
+		NoticeView noticeView = null;
 		
 		Connection con = null;
 		PreparedStatement st = null;
@@ -446,8 +470,9 @@ public class NoticeService {
 			con = DriverManager.getConnection(url, uid, upwd);
 			st = con.prepareStatement(sql);
 			st.setInt(1, id);
+			//st.setInt(2, 1);
+			System.out.println(sql);
 			rs = st.executeQuery();
-			
 			if(rs.next()) {
 				int nid = rs.getInt("Id");
 				String title = rs.getString("Title");
@@ -458,8 +483,9 @@ public class NoticeService {
 				int cmtcnt =  rs.getInt("cmtcnt");	
 				boolean pub = rs.getBoolean("pub");
 				
-				NoticeView n = new NoticeView(id, title, writer, date, hit, files, cmtcnt, pub);
-				}
+				noticeView = new NoticeView(nid, title, writer, date, hit, files, cmtcnt, pub);
+				System.out.println(2);
+			}
 		
 			if(rs != null) rs.close();
 			if(st != null) st.close();
@@ -472,11 +498,8 @@ public class NoticeService {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return notice;
-
+		return noticeView;
 	}
-
-	
 
 }
 
