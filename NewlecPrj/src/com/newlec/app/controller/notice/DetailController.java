@@ -28,10 +28,9 @@ public class DetailController extends HttpServlet{
 		String id = request.getParameter("id");
 		Notice notice = service.getNotice(id);
 		NoticeView pNotice = service.getPrevNoticeView(id);
-		System.out.println(pNotice);
+		System.out.println("pNotice 는 : " +pNotice);
 		NoticeView nNotice = service.getNextNoticeView(id);
-		System.out.println(nNotice);
-		
+		System.out.println("nNotice 는 : " + nNotice);
 		request.setAttribute("n", notice);
 		request.setAttribute("nextV", nNotice);
 		request.setAttribute("preV", pNotice);

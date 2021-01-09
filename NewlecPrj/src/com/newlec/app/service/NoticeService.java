@@ -390,13 +390,15 @@ public class NoticeService {
 		return n;
 	}
 	
+	public NoticeView getNextNoticeView(String id) {
+		int idInt = Integer.valueOf(id);
+		return getNextNoticeView(idInt);
+	}
 	public NoticeView getNextNoticeView(int id) {
 		
-		String sql = "select * from (select (@rownum2:=@rownum2+1) as rownum2 , notice_view.* "
-				+ "from notice_view where (@rownum2:=0)=0) NN where NN.pub = true and rownum2 < (select N.rownum "
-				+ "from (select (@rownum:=@rownum+1) as rownum, notice_view.id from notice_view "
-				+ "where (@rownum:=0)=0 ) N where id = ?) order by rownum2 limit 1";
-		
+		String sql = "select * from notice_view where pub = true "
+				+ "and id > (select id from (select (@rownum:=@rownum+1) as rownum, notice_view.* "
+				+ "from notice_view where (@rownum:=0)=0 ) N where id = ? ) order by id limit 0 , 1";
 		String url = "jdbc:mysql://localhost:3306/testDB?serverTimezone=Asia/Seoul&useSSL=false";
 		String uid = "root";
 		String upwd ="root"; 
@@ -410,10 +412,11 @@ public class NoticeService {
 			PreparedStatement st = con.prepareStatement(sql);
 			st.setInt(1, id);
 			ResultSet rs = st.executeQuery();
-			
 			if(rs.next()) {
 				int nid = rs.getInt("Id");
 				String title = rs.getString("Title");
+				if(title == null) 
+					title = "다음글이 없습니다";
 				String writer = rs.getString("Writer_ID");
 				Date date = rs.getDate("RegDate");
 				int hit = rs.getInt("Hit");
@@ -422,7 +425,7 @@ public class NoticeService {
 				int cmtcnt = rs.getInt("cmtcnt");
 				boolean pub = rs.getBoolean("pub");
 				
-				Notice n = new NoticeView(id, title, writer, date, hit, files, cmtcnt, pub);
+				notice = new NoticeView(nid, title, writer, date, hit, files, cmtcnt, pub);
 				
 				rs.close();
 				st.close();
@@ -439,11 +442,6 @@ public class NoticeService {
 		return notice;
 	}
 	
-	public NoticeView getNextNoticeView(String id) {
-		int idInt = Integer.valueOf(id);
-		return getNextNoticeView(idInt);
-	}
-	
 	public NoticeView getPrevNoticeView(String id) {
 		int idInt = Integer.valueOf(id);
 		return getPrevNoticeView(idInt);
@@ -451,11 +449,10 @@ public class NoticeService {
 	
 	public NoticeView getPrevNoticeView(int id) {
 		
-		String sql = "select * from (select (@rownum2:=@rownum2+1) as rownum2 , notice_view.* "
-				+ "from notice_view where (@rownum2:=0)=0) NN "
-				+ "where NN.pub = true and rownum2 > (select N.rownum from (select (@rownum:=@rownum+1) as rownum, notice_view.id "
-				+ "from notice_view where (@rownum:=0)=0 ) N where id = ? ) order by rownum2 limit 0 , 1";
-		
+		String sql = "select * from notice_view where pub = true"
+				+ " and id < (select id from (select (@rownum:=@rownum+1) as rownum, notice_view.*"
+				+ "	from notice_view where (@rownum:=0)=0 ) N where id = ? ) order by id desc limit 0 ,1";
+
 		String url = "jdbc:mysql://localhost:3306/testDB?serverTimezone=Asia/Seoul&useSSL=false";
 		String uid = "root";
 		String upwd ="root"; 
@@ -463,16 +460,16 @@ public class NoticeService {
 		NoticeView noticeView = null;
 		
 		Connection con = null;
-		PreparedStatement st = null;
+		PreparedStatement pst = null;
 		ResultSet rs = null;
 		try {
 			Class.forName(driver);
 			con = DriverManager.getConnection(url, uid, upwd);
-			st = con.prepareStatement(sql);
-			st.setInt(1, id);
-			//st.setInt(2, 1);
-			System.out.println(sql);
-			rs = st.executeQuery();
+			pst = con.prepareStatement(sql);
+			pst.setInt(1, id);
+			rs = pst.executeQuery();
+			System.out.println(1);
+			
 			if(rs.next()) {
 				int nid = rs.getInt("Id");
 				String title = rs.getString("Title");
@@ -488,7 +485,7 @@ public class NoticeService {
 			}
 		
 			if(rs != null) rs.close();
-			if(st != null) st.close();
+			if(pst != null) pst.close();
 			if(con != null) con.close();
 		
 		}catch (ClassNotFoundException e) {

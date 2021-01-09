@@ -192,28 +192,27 @@
 					<div class="margin-top">
 						<table class="table border-top-default">
 							<tbody>
-								
+							
 								<tr>
 									<th>다음글</th>
 									<td colspan="3"  class="text-align-left text-indent">
-									<a class="text-blue text-strong" href="detail?id=${nextV.id}">${nextV.title}
-									<c:if test="${nextV.cmtcnt != 0}">
+									<a class="text-blue text-strong" href="detail?id=${empty nextV.id ? n.id : nextV.id}">
+									${nextV.title == null ? '다음글이 없습니다' : nextV.title}
+									<c:if test="${nextV.cmtcnt != 0 && nextV.cmtcnt != null}">
 									<span class="-text- orange bold" >(${nextV.cmtcnt})</span>
 									</c:if>
 									</a></td>
 								</tr>
-								
 								<tr>
 									<th>이전글</th>
 									<td colspan="3"  class="text-align-left text-indent">
-									<a class="text-blue text-strong" href="detail?id=${preV.id}">${preV.title}
-									<c:if test="${preV.cmtcnt != 0}">
+									<a class="text-blue text-strong" href="detail?id=${empty preV.id ? n.id : preV.id}">
+									${preV.title == null ? '이전글이 없습니다' : preV.title}			
+									<c:if test="${preV.cmtcnt != 0 && preV.cmtcnt != null}">
 									<span class="-text- orange bold" >(${preV.cmtcnt})</span>
-									</c:if>
-									</a></td>
+									</c:if></a>
+									</td>	
 								</tr>
-								
-								
 							</tbody>
 						</table>
 					</div>			
