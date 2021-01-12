@@ -1,9 +1,13 @@
 package spring.di;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import spring.di.entitiy.Exam;
+import spring.di.entitiy.NewlecExam;
 import spring.di.ui.ExamConsole;
 
 public class Program {
@@ -24,6 +28,10 @@ public class Program {
 		Exam exam = context.getBean(Exam.class);
 		System.out.println(exam.toString());
 		console.print(); 
+		System.out.printf("\n\n");
+		List<Exam> exams = (List<Exam>) context.getBean("exams");
+		for(Exam e : exams)
+			System.out.println(e);
 	
 	}
 
